@@ -5,6 +5,7 @@ export type Block =
   | { type: "h"; level: number; html: string }
   | { type: "p"; html: string }
   | { type: "ul"; items: string[] }
+  | { type: "ol"; items: string[] }
   | { type: "img"; src: string; alt: string; w: number; h: number }
   | { type: "a"; text: string; href: string };
 

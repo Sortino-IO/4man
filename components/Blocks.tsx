@@ -54,13 +54,14 @@ function BlockView({ block }: { block: Block }) {
     return <Tag dangerouslySetInnerHTML={{ __html: block.html }} />;
   }
   if (block.type === "p") return <p dangerouslySetInnerHTML={{ __html: block.html }} />;
-  if (block.type === "ul") {
+  if (block.type === "ul" || block.type === "ol") {
+    const Tag = block.type;
     return (
-      <ul>
+      <Tag>
         {block.items.map((item, i) => (
           <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
         ))}
-      </ul>
+      </Tag>
     );
   }
   if (block.type === "img") {
