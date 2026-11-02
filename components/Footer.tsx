@@ -53,7 +53,6 @@ export function Footer() {
           </div>
         </div>
       </div>
-      <p className="powered">©Build by Adi Tahar. Powered and secured by Wix</p>
     </footer>
   );
 }

@@ -6,7 +6,8 @@ import { HeroVideo } from "./HeroVideo";
 import { Honeycomb } from "./Honeycomb";
 import { Reviews } from "./Reviews";
 import { SiteImage } from "./SiteImage";
-import type { Block, PageData } from "@/lib/types";
+import type { Block, Card, PageData } from "@/lib/types";
+import blogStats from "@/content/blog-stats.json";
 
 export function PageView({ page }: { page: PageData }) {
   if (page.kind === "home") return <HomeView page={page} />;
@@ -226,6 +227,7 @@ function HomeView({ page }: { page: PageData }) {
 }
 
 function ArticlesView({ page }: { page: PageData }) {
+  const page2 = page.seo.canonical.endsWith("/articles/page/2");
   return (
     <article className="page articles">
       <div className="wrap">
@@ -235,16 +237,35 @@ function ArticlesView({ page }: { page: PageData }) {
         </p>
         <div className="card-grid">
           {page.cards.map((card) => (
-            <article key={card.href} className="post-card">
-              {card.read ? <p className="read-time">{card.read}</p> : null}
-              <h2>
-                <Link href={card.href}>{card.title}</Link>
-              </h2>
-              {card.excerpt ? <p>{card.excerpt}</p> : null}
-            </article>
+            <BlogCard key={card.href} card={card} />
           ))}
         </div>
+        <p className="blog-pager">
+          {page2 ? <Link href="/articles">עמוד קודם</Link> : <Link href="/articles/page/2">עמוד הבא</Link>}
+        </p>
       </div>
+    </article>
+  );
+}
+
+export function BlogCard({ card }: { card: Card }) {
+  const slug = decodeURIComponent(card.href.replace(/^\/post\//, ""));
+  const stat = (blogStats as Record<string, { views: number; comments: number }>)[slug] || { views: 0, comments: 0 };
+  return (
+    <article className="post-card">
+      {card.read ? <p className="read-time">{card.read}</p> : null}
+      <h2>
+        <Link href={card.href}>{card.title}</Link>
+      </h2>
+      {card.excerpt ? <p>{card.excerpt}</p> : null}
+      <footer className="post-card-foot">
+        <span>
+          {stat.views} צפיות · {stat.comments} תגובות
+        </span>
+        <span className="heart" aria-hidden="true">
+          ♡
+        </span>
+      </footer>
     </article>
   );
 }
