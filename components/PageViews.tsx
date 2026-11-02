@@ -138,7 +138,6 @@ function InfoGrid({ cards }: { cards: { title: string; href: string; img: Extrac
 
 function HomeView({ page }: { page: PageData }) {
   const blocks = page.blocks;
-  const heroImg = blocks.find((b) => b.type === "img");
   const title = blocks.find((b) => b.type === "h");
   const subtitle = blocks.find((b) => b.type === "p");
   const mountain = blocks.find((b) => b.type === "img" && (b.alt === "Mountain" || b.src.includes("b2eb6890")));
@@ -153,9 +152,19 @@ function HomeView({ page }: { page: PageData }) {
   return (
     <article className="home">
       <section className="hero">
-        {heroImg && heroImg.type === "img" ? (
-          <SiteImage src={heroImg.src} alt={heroImg.alt} width={heroImg.w} height={heroImg.h} priority className="hero-img" />
-        ) : null}
+        <video
+          className="hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="/media/fb072e_9a394a197ce3406094ba5eb1ba2a40abf000.jpg"
+          aria-hidden="true"
+        >
+          <source src="/media/hero-480.mp4" type="video/mp4" media="(max-width: 767px)" />
+          <source src="/media/hero-720.mp4" type="video/mp4" />
+        </video>
         <div className="hero-copy">
           {title && title.type === "h" ? <h2 dangerouslySetInnerHTML={{ __html: title.html }} /> : <h2>4MAN</h2>}
           {subtitle && subtitle.type === "p" ? <p dangerouslySetInnerHTML={{ __html: subtitle.html }} /> : null}
