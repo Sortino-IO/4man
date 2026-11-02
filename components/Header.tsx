@@ -17,9 +17,10 @@ export function Header() {
         לדלג לתוכן הראשי
       </a>
       <div className="header-bar">
-        <a className="wa-header" href={WA} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-          <WhatsIcon />
-        </a>
+        <Link href="/" className="brand" aria-label="4MAN">
+          <Image src="/media/fb072e_d47657eb267c4784bb1f4731be2a755c~mv2.png" alt="לוגו" width={54} height={54} />
+          <span>4MAN.</span>
+        </Link>
         <button className="menu-toggle" type="button" aria-expanded={open} aria-label="תפריט" onClick={() => setOpen((v) => !v)}>
           <span />
           <span />
@@ -51,10 +52,9 @@ export function Header() {
             );
           })}
         </nav>
-        <Link href="/" className="brand" aria-label="4MAN">
-          <Image src="/media/fb072e_d47657eb267c4784bb1f4731be2a755c~mv2.png" alt="לוגו" width={63} height={63} />
-          <span>4MAN.</span>
-        </Link>
+        <a className="wa-header" href={WA} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+          <WhatsIcon />
+        </a>
       </div>
     </header>
   );

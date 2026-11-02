@@ -42,7 +42,7 @@ export default async function PostPage({ params }: Props) {
   return (
     <article className="page post">
       <JsonLd data={post.jsonld} />
-      <div className="wrap prose">
+      <div className="wrap prose post-column">
         <nav className="crumbs" aria-label="מיקום">
           <Link href="/">ראשי</Link>
           <span aria-hidden="true"> ‹ </span>

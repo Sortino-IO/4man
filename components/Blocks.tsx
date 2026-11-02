@@ -34,14 +34,20 @@ export function Blocks({ blocks, faqs = [] }: { blocks: Block[]; faqs?: { q: str
 
 function BlockView({ block }: { block: Block }) {
   if (block.type === "crumbs") {
+    const items = block.items.filter((c) => c.text);
+    const current = items.length ? items[items.length - 1] : null;
+    const trail = current ? items.slice(0, -1) : items;
     return (
       <nav className="crumbs" aria-label="מיקום">
-        {block.items.map((c, i) => (
-          <span key={`${c.text}-${i}`}>
-            {i > 0 ? <span aria-hidden="true"> ‹ </span> : null}
-            {c.href ? <Link href={c.href}>{c.text}</Link> : <span>{c.text}</span>}
-          </span>
-        ))}
+        <div className="crumb-trail">
+          {trail.map((c, i) => (
+            <span key={`${c.text}-${i}`}>
+              {i > 0 ? <span aria-hidden="true"> ‹ </span> : null}
+              {c.href ? <Link href={c.href}>{c.text}</Link> : <span>{c.text}</span>}
+            </span>
+          ))}
+        </div>
+        {current ? <div className="crumb-current">{current.text}</div> : null}
       </nav>
     );
   }
@@ -63,9 +69,10 @@ function BlockView({ block }: { block: Block }) {
     );
   }
   if (block.type === "img") {
+    const social = block.alt === "Instagram" || block.alt === "Facebook" || block.src.includes("8d689333") || block.src.includes("e316f544");
     return (
-      <figure>
-        <SiteImage src={block.src} alt={block.alt} width={block.w} height={block.h} />
+      <figure className={social ? "social-inline" : undefined}>
+        <SiteImage src={block.src} alt={block.alt} width={social ? 42 : block.w} height={social ? 42 : block.h} className={social ? "social-icon" : undefined} />
       </figure>
     );
   }

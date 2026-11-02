@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { Blocks } from "./Blocks";
+import { Honeycomb } from "./Honeycomb";
 import { Reviews } from "./Reviews";
 import { SiteImage } from "./SiteImage";
-import { WA } from "@/lib/nav";
 import type { Block, PageData } from "@/lib/types";
 
 export function PageView({ page }: { page: PageData }) {
@@ -15,58 +16,124 @@ export function PageView({ page }: { page: PageData }) {
 }
 
 function ContentView({ page }: { page: PageData }) {
-  const hero = splitHero(page.blocks);
+  const parsed = parseLayout(page.blocks);
   return (
     <article className={`page ${page.kind}`}>
       <div className="wrap">
-        {hero ? (
-          <>
-            <section className="split">
-              <SiteImage src={hero.img.src} alt={hero.img.alt} width={hero.img.w} height={hero.img.h} priority />
-              <div>
-                <Blocks blocks={hero.lead} />
-              </div>
-            </section>
-            <Blocks blocks={hero.rest} faqs={page.faqs} />
-          </>
-        ) : (
-          <Blocks blocks={page.blocks} faqs={page.faqs} />
-        )}
+        {parsed.hero ? (
+          <section className="split service-hero">
+            <SiteImage src={parsed.hero.src} alt={parsed.hero.alt} width={parsed.hero.w} height={parsed.hero.h} priority className="hero-photo" />
+            <div className="hero-text">
+              {parsed.crumbs ? <Blocks blocks={[parsed.crumbs]} /> : null}
+              <Blocks blocks={parsed.lead} />
+            </div>
+          </section>
+        ) : parsed.crumbs ? (
+          <Blocks blocks={[parsed.crumbs]} />
+        ) : null}
+        <div className={parsed.hero ? "page-body" : "page-body plain"}>
+          <Flow blocks={parsed.hero ? parsed.body : parsed.flow} faqs={page.faqs} />
+        </div>
       </div>
     </article>
   );
 }
 
-function splitHero(blocks: Block[]) {
-  let i = 0;
+function parseLayout(blocks: Block[]) {
+  const crumbs = blocks.find((b) => b.type === "crumbs");
+  const flow = blocks.filter((b) => b.type !== "crumbs");
+  const hero = flow[0]?.type === "img" ? flow[0] : null;
+  const rest = hero ? flow.slice(1) : flow;
+  if (!hero) return { crumbs, hero: null, lead: [] as Block[], body: rest, flow: rest };
   const lead: Block[] = [];
-  if (blocks[i]?.type === "crumbs") {
-    lead.push(blocks[i]);
+  let i = 0;
+  while (i < rest.length) {
+    const b = rest[i];
+    if (b.type === "h" && b.level >= 2) break;
+    if (b.type === "img") break;
+    lead.push(b);
     i += 1;
+    if (b.type === "a") break;
   }
-  const img = blocks[i];
-  if (!img || img.type !== "img") return null;
-  i += 1;
-  const head = blocks[i];
-  if (!head || head.type !== "h") return null;
-  lead.push(head);
-  i += 1;
+  return { crumbs, hero, lead, body: rest.slice(i), flow: rest };
+}
+
+function Flow({ blocks, faqs }: { blocks: Block[]; faqs: { q: string; a: string }[] }) {
+  const nodes: ReactNode[] = [];
+  let i = 0;
+  let key = 0;
   while (i < blocks.length) {
-    const b = blocks[i];
-    if (b.type === "h" && b.level === 1) {
-      lead.push(b);
-      i += 1;
+    if (isInfoCard(blocks, i)) {
+      const cards: { title: string; href: string; img: Extract<Block, { type: "img" }> }[] = [];
+      while (isInfoCard(blocks, i)) {
+        const title = blocks[i];
+        const link = blocks[i + 1];
+        const img = blocks[i + 2];
+        if (title.type === "p" && link.type === "a" && img.type === "img") {
+          cards.push({ title: strip(title.html), href: link.href, img });
+        }
+        i += 3;
+      }
+      nodes.push(<InfoGrid key={key++} cards={cards} />);
       continue;
     }
-    if (b.type === "p" || b.type === "a") {
-      lead.push(b);
-      i += 1;
-      if (b.type === "a") break;
+    if (blocks[i].type === "img") {
+      const imgs: Extract<Block, { type: "img" }>[] = [];
+      while (blocks[i]?.type === "img") {
+        const img = blocks[i];
+        if (img.type === "img") imgs.push(img);
+        i += 1;
+      }
+      const social = imgs.every(isSocialIcon);
+      nodes.push(
+        <div key={key++} className={social ? "social-row" : imgs.length >= 3 ? "cert-row" : "single-photo"}>
+          {imgs.map((img) => (
+            <SiteImage key={img.src} src={img.src} alt={img.alt} width={social ? 42 : img.w} height={social ? 42 : img.h} />
+          ))}
+        </div>,
+      );
       continue;
     }
-    break;
+    const start = i;
+    const chunk: Block[] = [];
+    while (i < blocks.length && !isInfoCard(blocks, i) && blocks[i].type !== "img") {
+      chunk.push(blocks[i]);
+      i += 1;
+    }
+    nodes.push(<Blocks key={key++} blocks={chunk} faqs={chunkHasFaq(chunk, faqs) ? faqs : []} />);
   }
-  return { img, lead, rest: blocks.slice(i) };
+  return <>{nodes}</>;
+}
+
+function chunkHasFaq(chunk: Block[], faqs: { q: string; a: string }[]) {
+  return chunk.some((b) => b.type === "h" && faqs.some((f) => strip(b.html) === f.q.replace(/\s+/g, " ").trim()));
+}
+
+function isSocialIcon(img: Extract<Block, { type: "img" }>) {
+  return img.alt === "Instagram" || img.alt === "Facebook" || img.src.includes("8d689333") || img.src.includes("e316f544");
+}
+
+function isInfoCard(blocks: Block[], i: number) {
+  const a = blocks[i];
+  const b = blocks[i + 1];
+  const c = blocks[i + 2];
+  return a?.type === "p" && b?.type === "a" && b.text.includes("למידע") && c?.type === "img";
+}
+
+function InfoGrid({ cards }: { cards: { title: string; href: string; img: Extract<Block, { type: "img" }> }[] }) {
+  return (
+    <div className="info-grid">
+      {cards.map((card) => (
+        <Link key={card.href + card.title} href={card.href} className="info-card">
+          <SiteImage src={card.img.src} alt={card.img.alt || card.title} width={card.img.w} height={card.img.h} />
+          <span className="info-cap">
+            <span className="info-title">{card.title}</span>
+            <span className="info-more">למידע נוסף</span>
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
 }
 
 function HomeView({ page }: { page: PageData }) {
@@ -75,10 +142,8 @@ function HomeView({ page }: { page: PageData }) {
   const title = blocks.find((b) => b.type === "h");
   const subtitle = blocks.find((b) => b.type === "p");
   const mountain = blocks.find((b) => b.type === "img" && (b.alt === "Mountain" || b.src.includes("b2eb6890")));
-  const serviceStart = blocks.findIndex((b) => b.type === "p" && strip(b.html).includes("הטיפולים של 4MAN"));
   const vito = blocks.findIndex((b) => b.type === "img" && (b.alt.includes("ויטו") || b.src.includes("1756427082374")));
   const contact = blocks.findIndex((b) => b.type === "h" && strip(b.type === "h" ? b.html : "").includes("צור קשר"));
-  const services = serviceStart >= 0 ? blocks.slice(serviceStart + 1, vito > 0 ? vito : undefined).filter(isLinkPara) : [];
   const about = vito >= 0 ? blocks.slice(vito, contact > 0 ? contact : undefined) : [];
   const tail = contact >= 0 ? blocks.slice(contact) : [];
   const gallery = about.filter((b) => b.type === "img" && !(b.alt || "").includes("ויטו"));
@@ -100,11 +165,7 @@ function HomeView({ page }: { page: PageData }) {
       <section className="services-band" style={mountain && mountain.type === "img" ? { backgroundImage: `url(${mountain.src})` } : undefined}>
         <div className="wrap">
           <p className="band-title">הטיפולים של 4MAN</p>
-          <div className="service-grid">
-            {services.map((b) =>
-              b.type === "p" ? <p key={b.html} dangerouslySetInnerHTML={{ __html: b.html }} /> : null,
-            )}
-          </div>
+          <Honeycomb />
         </div>
       </section>
 
@@ -141,18 +202,17 @@ function ArticlesView({ page }: { page: PageData }) {
     <article className="page articles">
       <div className="wrap">
         <Blocks blocks={page.blocks.filter((b) => b.type === "crumbs")} />
+        <p className="all-posts">
+          <Link href="/articles">All Posts</Link>
+        </p>
         <div className="card-grid">
           {page.cards.map((card) => (
             <article key={card.href} className="post-card">
-              {card.image ? <SiteImage src={card.image} alt="" width={card.w || 1200} height={card.h || 800} /> : null}
+              {card.read ? <p className="read-time">{card.read}</p> : null}
               <h2>
                 <Link href={card.href}>{card.title}</Link>
               </h2>
               {card.excerpt ? <p>{card.excerpt}</p> : null}
-              <p className="meta-line">
-                {card.read ? <span>{card.read}</span> : null}
-                <Link href={card.href}>המשך קריאה</Link>
-              </p>
             </article>
           ))}
         </div>
@@ -162,10 +222,23 @@ function ArticlesView({ page }: { page: PageData }) {
 }
 
 function ContactView({ page }: { page: PageData }) {
+  const socials = page.blocks.filter((b): b is Extract<Block, { type: "img" }> => b.type === "img" && isSocialIcon(b));
+  const rest = page.blocks.filter((b) => !(b.type === "img" && isSocialIcon(b)) && !(b.type === "a" && !b.text.trim()));
+  const buttonAt = rest.findIndex((b) => b.type === "a");
+  const before = buttonAt >= 0 ? rest.slice(0, buttonAt) : rest;
+  const after = buttonAt >= 0 ? rest.slice(buttonAt) : [];
   return (
     <article className="page contact">
       <div className="wrap center">
-        <Blocks blocks={page.blocks} />
+        <Blocks blocks={before} />
+        {socials.length ? (
+          <div className="social-row">
+            {socials.map((img) => (
+              <SiteImage key={img.src} src={img.src} alt={img.alt} width={42} height={42} className="social-icon" />
+            ))}
+          </div>
+        ) : null}
+        <Blocks blocks={after} />
       </div>
     </article>
   );
@@ -228,6 +301,3 @@ function strip(html: string) {
   return html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 }
 
-function isLinkPara(b: Block) {
-  return b.type === "p" && b.html.includes("<a ");
-}
