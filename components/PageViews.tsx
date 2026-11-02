@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Blocks } from "./Blocks";
+import { Coverflow, GalleryStrip, MosaicGallery } from "./Gallery";
 import { HeroVideo } from "./HeroVideo";
 import { Honeycomb } from "./Honeycomb";
 import { Reviews } from "./Reviews";
@@ -92,8 +93,12 @@ function Flow({ blocks, faqs }: { blocks: Block[]; faqs: { q: string; a: string 
         i += 1;
       }
       const social = imgs.every(isSocialIcon);
+      if (!social && imgs.length >= 2) {
+        nodes.push(<GalleryStrip key={key++} items={imgs.map((img) => ({ src: img.src, alt: img.alt || "" }))} />);
+        continue;
+      }
       nodes.push(
-        <div key={key++} className={social ? "social-row" : imgs.length >= 3 ? "cert-row" : "single-photo"}>
+        <div key={key++} className={social ? "social-row" : "single-photo"}>
           {imgs.map((img) => (
             <SiteImage key={img.src} src={img.src} alt={img.alt} width={social ? 42 : img.w} height={social ? 42 : img.h} />
           ))}
@@ -116,48 +121,11 @@ function chunkHasFaq(chunk: Block[], faqs: { q: string; a: string }[]) {
   return chunk.some((b) => b.type === "h" && faqs.some((f) => strip(b.html) === f.q.replace(/\s+/g, " ").trim()));
 }
 
-const CERT_POS = [
-  { file: "fb072e_8a1c8df879074c53b4db9355b932f417~mv2.png", l: 27, t: 1, w: 10, h: 24, z: 1 },
-  { file: "fb072e_4cf25bd51d564a90922a398c722bcd36~mv2.jpg", l: 36, t: 0, w: 16, h: 26, z: 1 },
-  { file: "fb072e_fbcadb28b6ad4dd69dbd25d155633f0b~mv2.jpeg", l: 50, t: 0, w: 12, h: 18, z: 1 },
-  { file: "fb072e_035c2fee08c94ed19c37d0508d97ca8a~mv2.png", l: 60, t: 0, w: 15, h: 20, z: 1 },
-  { file: "fb072e_395ac51422ba4c5d8473b037d69d3128~mv2.png", l: 73, t: 2, w: 12, h: 24, z: 1 },
-  { file: "fb072e_178e872e769448ecab6b959437652894~mv2.jpg", l: 16, t: 10, w: 16, h: 40, z: 2 },
-  { file: "fb072e_4376bd2da5af47e383d5c51e8e6a9e6f~mv2.jpg", l: 0, t: 18, w: 28, h: 68, z: 2 },
-  { file: "fb072e_82f3311deb114ff18032e8f45675ec7c~mv2.jpg", l: 5, t: 12, w: 36, h: 78, z: 3 },
-  { file: "fb072e_987b8a8bf56942319e6725aecdd1165e~mv2.jpg", l: 30, t: 8, w: 38, h: 84, z: 5 },
-  { file: "fb072e_b46721c4ff1549b59b91ef05415a6ac0~mv2.png", l: 58, t: 10, w: 42, h: 78, z: 4 },
-];
-
 function AboutMedia() {
   return (
     <>
-      <div className="cert-stage" aria-hidden="true">
-        {CERT_POS.map((item) => (
-          <img
-            key={item.file}
-            src={`/media/${item.file}`}
-            alt=""
-            style={{
-              left: `${item.l}%`,
-              top: `${item.t}%`,
-              width: `${item.w}%`,
-              height: `${item.h}%`,
-              zIndex: item.z,
-            }}
-          />
-        ))}
-      </div>
-      <div className="about-collage">
-        <img className="c-fish" src="/media/fb072e_d5e8c8ea48d644d798c287181cd07423~mv2.jpg" alt="" />
-        <img className="c-room" src="/media/fb072e_74b038bc7984433f80742dacae181c13~mv2.jpg" alt="" />
-        <img className="c-small" src="/media/fb072e_d63165e329624cd7881e214b9b6846a1~mv2.jpg" alt="" />
-        <img className="c-wash" src="/media/fb072e_2e204bec3b494b218c4300ed924d3e04~mv2.jpg" alt="" />
-        <img className="c-man" src="/media/fb072e_cb9a09bac4ed4ef596c535f341b224ff~mv2.png" alt="" />
-        <img className="c-blinds" src="/media/fb072e_9f0d51ae2fe6465cb1eaf64c20d59cae~mv2.jpg" alt="" />
-        <img className="c-sofa" src="/media/fb072e_d9c60f5d8b1c47d094ea5aaca34c25f7~mv2.jpg" alt="" />
-        <span className="c-next" aria-hidden="true" />
-      </div>
+      <Coverflow />
+      <MosaicGallery />
     </>
   );
 }
@@ -226,13 +194,7 @@ function HomeView({ page }: { page: PageData }) {
           </div>
           {portrait ? <SiteImage src={portrait.src} alt={portrait.alt} width={portrait.w} height={portrait.h} className="portrait" /> : null}
         </div>
-        {gallery.length ? (
-          <div className="wrap gallery">
-            {gallery.map((b) =>
-              b.type === "img" ? <SiteImage key={b.src} src={b.src} alt={b.alt} width={b.w} height={b.h} /> : null,
-            )}
-          </div>
-        ) : null}
+        {gallery.length ? <MosaicGallery /> : null}
       </section>
 
       <section className="contact-band">
