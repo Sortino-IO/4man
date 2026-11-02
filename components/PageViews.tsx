@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { Blocks } from "./Blocks";
+import { HeroVideo } from "./HeroVideo";
 import { Honeycomb } from "./Honeycomb";
 import { Reviews } from "./Reviews";
 import { SiteImage } from "./SiteImage";
@@ -152,19 +153,7 @@ function HomeView({ page }: { page: PageData }) {
   return (
     <article className="home">
       <section className="hero">
-        <video
-          className="hero-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster="/media/fb072e_9a394a197ce3406094ba5eb1ba2a40abf000.jpg"
-          aria-hidden="true"
-        >
-          <source src="/media/hero-480.mp4" type="video/mp4" media="(max-width: 767px)" />
-          <source src="/media/hero-720.mp4" type="video/mp4" />
-        </video>
+        <HeroVideo />
         <div className="hero-copy">
           {title && title.type === "h" ? <h2 dangerouslySetInnerHTML={{ __html: title.html }} /> : <h2>4MAN</h2>}
           {subtitle && subtitle.type === "p" ? <p dangerouslySetInnerHTML={{ __html: subtitle.html }} /> : null}

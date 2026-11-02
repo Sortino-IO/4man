@@ -166,13 +166,13 @@ img { max-width: 100%; height: auto; }
 .split > div { direction: rtl; text-align: right; }
 .split .site-img { width: 100%; height: auto; object-fit: cover; }
 
-.hero { position: relative; min-height: 420px; display: grid; background: #111; }
+.hero { position: relative; min-height: 420px; display: grid; background: #111; overflow: hidden; }
 .hero-video, .hero-img {
   width: 100%;
   height: 560px;
   object-fit: cover;
   object-position: center center;
-  background: #111 url("/media/fb072e_9a394a197ce3406094ba5eb1ba2a40abf000.jpg") center / cover no-repeat;
+  background: #111;
 }
 .hero-copy {
   position: absolute;
