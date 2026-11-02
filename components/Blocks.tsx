@@ -35,19 +35,14 @@ export function Blocks({ blocks, faqs = [] }: { blocks: Block[]; faqs?: { q: str
 function BlockView({ block }: { block: Block }) {
   if (block.type === "crumbs") {
     const items = block.items.filter((c) => c.text);
-    const current = items.length ? items[items.length - 1] : null;
-    const trail = current ? items.slice(0, -1) : items;
     return (
       <nav className="crumbs" aria-label="מיקום">
-        <div className="crumb-trail">
-          {trail.map((c, i) => (
-            <span key={`${c.text}-${i}`}>
-              {i > 0 ? <span aria-hidden="true"> ‹ </span> : null}
-              {c.href ? <Link href={c.href}>{c.text}</Link> : <span>{c.text}</span>}
-            </span>
-          ))}
-        </div>
-        {current ? <div className="crumb-current">{current.text}</div> : null}
+        {items.map((c, i) => (
+          <span key={`${c.text}-${i}`}>
+            {i > 0 ? <span aria-hidden="true"> ‹ </span> : null}
+            {i < items.length - 1 && c.href ? <Link href={c.href}>{c.text}</Link> : <span className="crumb-current">{c.text}</span>}
+          </span>
+        ))}
       </nav>
     );
   }

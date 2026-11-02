@@ -49,10 +49,14 @@ function parseLayout(blocks: Block[]) {
   if (!hero) return { crumbs, hero: null, lead: [] as Block[], body: rest, flow: rest };
   const lead: Block[] = [];
   let i = 0;
+  let h2s = 0;
   while (i < rest.length) {
     const b = rest[i];
-    if (b.type === "h" && b.level >= 2) break;
     if (b.type === "img") break;
+    if (b.type === "h" && b.level >= 2) {
+      h2s += 1;
+      if (h2s > 1) break;
+    }
     lead.push(b);
     i += 1;
     if (b.type === "a") break;
@@ -106,9 +110,21 @@ function Flow({ blocks, faqs }: { blocks: Block[]; faqs: { q: string; a: string 
       );
       continue;
     }
-    const start = i;
+    const head = blocks[i];
+    if (head.type === "h" && strip(head.html).includes("צור קשר")) {
+      const chunk: Block[] = [blocks[i]];
+      i += 1;
+      while (i < blocks.length && blocks[i].type !== "h" && !isInfoCard(blocks, i)) {
+        chunk.push(blocks[i]);
+        i += 1;
+      }
+      nodes.push(<ContactSplit key={key++} blocks={chunk} />);
+      continue;
+    }
     const chunk: Block[] = [];
     while (i < blocks.length && !isInfoCard(blocks, i) && blocks[i].type !== "img") {
+      const next = blocks[i];
+      if (next.type === "h" && strip(next.html).includes("צור קשר")) break;
       chunk.push(blocks[i]);
       i += 1;
     }
@@ -294,6 +310,25 @@ function ProfileView({ page }: { page: PageData }) {
         ) : null}
       </div>
     </article>
+  );
+}
+
+function ContactSplit({ blocks }: { blocks: Block[] }) {
+  return (
+    <section className="about-contact">
+      <div className="about-contact-card">
+        <Blocks blocks={blocks} />
+        <div className="social-row">
+          <a href="https://www.instagram.com/4mantlv?igsh=MTJrZnl6dm5jMGEyaA==" target="_blank" rel="noopener noreferrer">
+            <img src="/media/8d6893330740455c96d218258a458aa4.png" alt="Instagram" width={36} height={36} />
+          </a>
+          <a href="https://www.facebook.com/4mantlv/" target="_blank" rel="noopener noreferrer">
+            <img src="/media/e316f544f9094143b9eac01f1f19e697.png" alt="Facebook" width={36} height={36} />
+          </a>
+        </div>
+      </div>
+      <Map />
+    </section>
   );
 }
 
