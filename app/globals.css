@@ -26,8 +26,9 @@ img { max-width: 100%; height: auto; }
 .skip:focus { top: 8px; }
 
 .site-header {
-  position: relative;
-  z-index: 40;
+  position: sticky;
+  top: 0;
+  z-index: 45;
   background: #000;
 }
 .header-bar {
@@ -170,11 +171,12 @@ img { max-width: 100%; height: auto; }
 .center .blocks, .contact .blocks { text-align: center; }
 
 .blocks { text-align: right; }
-.page-body { max-width: 980px; margin: 36px auto 0; text-align: center; }
-.page-body .blocks, .page-body .blocks p, .page-body .blocks li, .page-body .blocks h2, .page-body .blocks h3 { text-align: center; }
+.page-body { max-width: 980px; margin: 36px auto 0; text-align: right; }
+.page-body .blocks, .page-body .blocks p, .page-body .blocks li, .page-body .blocks h1, .page-body .blocks h2, .page-body .blocks h3 { text-align: right; }
+.page.hub .page-body, .page.hub .page-body .blocks, .page.hub .page-body .blocks h1, .page.hub .page-body .blocks h2, .page.hub .page-body .blocks p { text-align: center; }
 .hero-text { text-align: right; }
-.hero-text .blocks, .hero-text .blocks p, .hero-text .blocks li, .hero-text .blocks h1 { text-align: right; }
-.hero-text .blocks p.cta-row { text-align: left; }
+.hero-text .blocks, .hero-text .blocks p, .hero-text .blocks li, .hero-text .blocks h1, .hero-text .blocks h2 { text-align: right; }
+.hero-text .blocks p.cta-row { text-align: right; }
 .hero-photo { width: 100%; height: auto; border: 3px solid #f5c400; }
 .crumb-trail { font-size: 14px; }
 .crumb-current { margin-top: 8px; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
@@ -183,16 +185,37 @@ img { max-width: 100%; height: auto; }
 .post-column { max-width: 820px; }
 .post-column h1, .post-column h2, .post-column p { text-align: right; }
 .blocks h1, .prose h1, .center h1 {
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 500;
-  line-height: 1.35;
-  margin: 12px 0 18px;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1.4;
+  margin: 8px 0 14px;
 }
-.blocks h2, .prose h2 { font-size: 28px; font-weight: 500; margin: 32px 0 12px; }
-.blocks h3, .prose h3 { font-size: 22px; margin: 24px 0 8px; }
-.blocks p, .prose p, .blocks li { font-size: 18px; line-height: 1.75; color: #f2f2f2; }
-.blocks a, .prose a { color: var(--gold); }
-.blocks ul { padding-inline-start: 1.2em; }
+.page.hub .blocks h1, .recommendations .blocks h1 { font-size: 56px; line-height: 1.4; text-align: center; }
+.recommendations .blocks, .recommendations .blocks h1, .recommendations .blocks p { text-align: center; }
+.authored { list-style: none; padding: 0; text-align: right; }
+.blocks h2 { font-size: 35px; font-weight: 400; line-height: 1.4; margin: 28px 0 10px; }
+.page.about .blocks h2, .page.about .blocks h3, .page.legal .blocks h2, .page.legal .blocks h3 { font-size: 26px; }
+.blocks h3 { font-size: 26px; font-weight: 400; line-height: 1.4; margin: 22px 0 8px; }
+.prose h2 { font-size: 28px; font-weight: 400; line-height: 1.4; margin: 28px 0 10px; }
+.prose h3 { font-size: 22px; font-weight: 400; margin: 22px 0 8px; }
+.blocks p, .blocks li { font-size: 17px; font-weight: 300; line-height: 1.4; color: #fff; margin: 0 0 0.55em; }
+.prose p, .prose li { font-size: 18px; font-weight: 300; line-height: 1.5; color: #fff; }
+.blocks a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.blocks a.btn, .blocks a.btn.gold { color: #111; text-decoration: none; }
+.prose a { color: var(--gold); text-decoration: underline; text-underline-offset: 3px; }
+.blocks ul, .blocks ol, .prose ul, .prose ol {
+  direction: rtl;
+  text-align: right;
+  list-style-position: outside;
+  padding-inline-start: 1.35em;
+  padding-inline-end: 0;
+  margin: 0.35em 0 0.9em;
+}
+.blocks ul, .prose ul { list-style-type: disc; }
+.blocks ul ul, .prose ul ul { list-style-type: circle; margin-top: 0.35em; }
+.blocks ol, .prose ol { list-style-type: decimal; }
+.blocks li, .prose li { display: list-item; text-align: right; }
+.page-body .blocks li, .hero-text .blocks li { text-align: right; }
 .blocks figure, .prose .site-img, .prose p .site-img { margin: 18px 0; }
 .site-img { width: 100%; height: auto; display: block; }
 .zw { min-height: 1em; }
@@ -305,12 +328,30 @@ img { max-width: 100%; height: auto; }
   white-space: pre-line;
   text-shadow: 0 1px 3px rgba(0,0,0,.85);
 }
-.info-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 18px 0 28px; text-align: initial; }
-.info-card { position: relative; display: block; min-height: 300px; background: #161616; color: #fff; text-decoration: none; overflow: hidden; }
-.info-card .site-img { width: 100%; height: 320px; object-fit: cover; }
-.info-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 48px 12px 16px; background: linear-gradient(transparent, rgba(0,0,0,.82)); text-align: center; }
-.info-title { display: block; font-weight: 600; font-size: 18px; margin-bottom: 10px; }
-.info-more { display: inline-block; border: 1px solid #ddd; padding: 7px 14px; font-size: 14px; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 28px; margin: 18px 0 36px; text-align: initial; }
+.info-card {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  direction: rtl;
+  min-height: 230px;
+  background: #1a1a1a;
+  color: #fff;
+  text-decoration: none;
+  overflow: hidden;
+}
+.info-card .site-img { width: 100%; height: 100%; min-height: 230px; object-fit: cover; }
+.info-cap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 18px 14px;
+  text-align: center;
+  background: #1a1a1a;
+}
+.info-title { display: block; font-weight: 400; font-size: 20px; line-height: 1.35; }
+.info-more { display: inline-block; border: 1px solid #cfcfcf; padding: 8px 16px; font-size: 15px; font-weight: 300; }
 .coverflow {
   position: relative;
   width: min(1264px, 100vw);
@@ -652,7 +693,10 @@ img { max-width: 100%; height: auto; }
   .split, .about-grid, .contact-grid, .card-grid, .review-grid, .footer-grid {
     grid-template-columns: 1fr;
   }
-  .info-grid { grid-template-columns: 1fr 1fr; }
+  .info-grid { grid-template-columns: 1fr; }
+  .info-card { min-height: 180px; }
+  .info-card .site-img { min-height: 180px; }
+  .info-title { font-size: 16px; }
   .main-nav { justify-content: flex-start; }
   .honey { display: flex; flex-wrap: wrap; justify-content: center; }
   .honey-row { display: contents; }

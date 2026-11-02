@@ -20,7 +20,7 @@ export function PageView({ page }: { page: PageData }) {
 function ContentView({ page }: { page: PageData }) {
   const parsed = parseLayout(page.blocks);
   return (
-    <article className={`page ${page.kind}`}>
+    <article className={`page ${page.kind}${page.seo.canonical.endsWith("/treatments") ? " hub" : ""}`}>
       <div className="wrap">
         {parsed.hero ? (
           <section className="split service-hero">
