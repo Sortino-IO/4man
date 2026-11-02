@@ -183,13 +183,38 @@ img { max-width: 100%; height: auto; }
 .hero-text .crumbs { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 10px; }
 .hero-text .crumbs a, .hero-text .crumb-current { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .page-body.plain { margin-top: 10px; }
-.post-column { max-width: 980px; }
+.post-column {
+  width: min(820px, calc(100% - 32px));
+  max-width: 820px;
+  margin-inline: auto;
+  overflow-wrap: anywhere;
+}
 .post-frame {
   border: 1px solid rgba(255, 255, 255, 0.45);
   padding: 22px 28px 40px;
   margin-top: 8px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
-.post-column h1, .post-frame h1, .post-frame h2, .post-frame p { text-align: center; }
+.post-frame h1,
+.post-frame h2,
+.post-frame h3,
+.post-frame h4,
+.post-frame p,
+.post-frame li,
+.post-frame [style*="text-align"] {
+  text-align: right !important;
+}
+.post-frame [style*="width"],
+.post-frame img,
+.post-frame video,
+.post-frame iframe,
+.post-frame table {
+  width: auto !important;
+  max-width: 100% !important;
+  height: auto;
+}
 .post-frame li { text-align: right; }
 .blocks h1, .prose h1, .center h1 {
   font-size: 40px;
