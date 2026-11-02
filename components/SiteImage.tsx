@@ -20,12 +20,17 @@ export function SiteImage({
   priority?: boolean;
   className?: string;
 }) {
+  const w = toPx(width, 1200);
+  const h = toPx(height, 800);
+  if (/^https?:\/\//.test(src)) {
+    return <img src={src} alt={alt || ""} width={w} height={h} className={className || "site-img"} />;
+  }
   return (
     <Image
       src={src}
       alt={alt || ""}
-      width={toPx(width, 1200)}
-      height={toPx(height, 800)}
+      width={w}
+      height={h}
       priority={priority}
       className={className || "site-img"}
       sizes="(max-width: 900px) 100vw, 960px"
