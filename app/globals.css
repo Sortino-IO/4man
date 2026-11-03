@@ -241,7 +241,20 @@ img { max-width: 100%; height: auto; }
   line-height: 1.4;
   margin: 8px 0 14px;
 }
-.page.hub .blocks h1, .recommendations .blocks h1 { font-size: 56px; line-height: 1.4; text-align: center; }
+.page.hub .blocks h1, .recommendations .blocks h1 { font-size: 56px; line-height: 1.4; text-align: center; font-weight: 400; }
+.page.hub .blocks h1 + h1 {
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.5;
+  max-width: 780px;
+  margin: 10px auto 8px;
+}
+.page.hub .blocks h2 {
+  font-size: 40px;
+  font-weight: 400;
+  text-align: center;
+  margin: 34px 0 18px;
+}
 .recommendations .blocks, .recommendations .blocks h1, .recommendations .blocks p { text-align: center; }
 .authored { list-style: none; padding: 0; text-align: right; }
 .blocks h2 { font-size: 35px; font-weight: 400; line-height: 1.4; margin: 28px 0 10px; }
@@ -401,30 +414,69 @@ img { max-width: 100%; height: auto; }
   white-space: pre-line;
   text-shadow: 0 1px 3px rgba(0,0,0,.85);
 }
-.info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 30px; margin: 18px auto 36px; max-width: 980px; text-align: initial; width: 100%; }
+.info-grid {
+  display: grid;
+  direction: ltr;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(var(--info-rows, 2), 338px);
+  gap: 30px;
+  margin: 8px auto 20px;
+  max-width: 980px;
+  text-align: initial;
+  width: 100%;
+}
 .info-card {
   display: grid;
   grid-template-columns: 1fr 1fr;
   direction: rtl;
   height: 338px;
-  background: #111;
+  background: #222323;
   color: #fff;
   text-decoration: none;
   overflow: hidden;
+  min-width: 0;
 }
-.info-card .site-img { width: 100%; height: 338px; min-height: 0; object-fit: cover; object-position: center center; border-bottom: 4px solid #f5c400; }
+.info-card .site-img { width: 100%; height: 338px; min-height: 0; object-fit: cover; object-position: center center; border-bottom: 2px solid #fed100; }
 .info-cap {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 18px 14px;
+  gap: 18px;
+  padding: 18px 16px;
   text-align: center;
-  background: #1a1a1a;
+  background: #222323;
+}
+.treatment-banner {
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  margin-top: 36px;
+  margin-bottom: 28px;
+  margin-inline: calc(50% - 50vw);
+  min-height: 460px;
+  padding: 56px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #071525 center / cover no-repeat;
+  overflow: hidden;
+}
+.treatment-banner-inner { width: min(860px, 100%); text-align: center; }
+.treatment-banner .blocks h1,
+.treatment-banner .blocks h2,
+.treatment-banner .blocks p,
+.treatment-banner .blocks li { color: #fff; text-align: center; }
+.treatment-banner .blocks h1 { font-size: clamp(28px, 4vw, 40px); margin: 0 0 16px; }
+.treatment-banner .blocks ul {
+  width: fit-content;
+  max-width: 100%;
+  margin: 12px auto;
+  text-align: right;
 }
 .info-title { display: block; font-weight: 400; font-size: 20px; line-height: 1.35; }
-.info-more { display: inline-block; border: 1px solid #cfcfcf; padding: 8px 16px; font-size: 15px; font-weight: 300; }
+.info-more { display: inline-block; border: 1px solid #fff; padding: 8px 22px; min-width: 142px; font-size: 16px; font-weight: 400; line-height: 1.4; }
 .coverflow {
   position: relative;
   width: min(1264px, 100%);
@@ -837,10 +889,14 @@ img { max-width: 100%; height: auto; }
     grid-template-columns: minmax(0, 1fr);
   }
   .honey-row { width: 100%; flex-wrap: wrap; }
-  .info-grid, .about-contact, .gallery { grid-template-columns: minmax(0, 1fr); }
-  .info-card, .info-card .site-img { height: 220px; }
+  .info-grid {
+    grid-auto-flow: row;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+  .about-contact, .gallery { grid-template-columns: minmax(0, 1fr); }
+  .info-card, .info-card .site-img { height: 240px; }
   .about-contact { grid-template-columns: minmax(0, 1fr); }
-  .info-title { font-size: 16px; }
   .main-nav { justify-content: flex-start; }
   .honey {
     --hex-w: min(140px, calc((100cqi - 16px) / 3));

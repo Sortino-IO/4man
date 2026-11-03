@@ -97,6 +97,16 @@ function Flow({ blocks, faqs }: { blocks: Block[]; faqs: { q: string; a: string 
         if (img.type === "img") imgs.push(img);
         i += 1;
       }
+      const banner = imgs.length === 1 && imgs[0].w >= 1600 && imgs[0].w / imgs[0].h > 1.55 && blocks[i]?.type === "h";
+      if (banner) {
+        const chunk: Block[] = [];
+        while (i < blocks.length && !(chunk.length && blocks[i].type === "h" && blocks[i].level <= 2)) {
+          chunk.push(blocks[i]);
+          i += 1;
+        }
+        nodes.push(<TreatmentBanner key={key++} src={imgs[0].src} blocks={chunk} />);
+        continue;
+      }
       const social = imgs.every(isSocialIcon);
       if (!social && imgs.length >= 2) {
         nodes.push(<GalleryStrip key={key++} items={imgs.map((img) => ({ src: img.src, alt: img.alt || "" }))} />);
@@ -158,9 +168,20 @@ function isInfoCard(blocks: Block[], i: number) {
   return a?.type === "p" && b?.type === "a" && b.text.includes("למידע") && c?.type === "img";
 }
 
-function InfoGrid({ cards }: { cards: { title: string; href: string; img: Extract<Block, { type: "img" }> }[] }) {
+function TreatmentBanner({ src, blocks }: { src: string; blocks: Block[] }) {
   return (
-    <div className="info-grid">
+    <section className="treatment-banner" style={{ backgroundImage: `url(${src})` }}>
+      <div className="treatment-banner-inner">
+        <Blocks blocks={blocks} />
+      </div>
+    </section>
+  );
+}
+
+function InfoGrid({ cards }: { cards: { title: string; href: string; img: Extract<Block, { type: "img" }> }[] }) {
+  const rows = Math.ceil(cards.length / 2);
+  return (
+    <div className="info-grid" style={{ ["--info-rows" as string]: rows }}>
       {cards.map((card) => (
         <Link key={card.href + card.title} href={card.href} className="info-card">
           <SiteImage src={card.img.src} alt={card.img.alt || card.title} width={card.img.w} height={card.img.h} />
