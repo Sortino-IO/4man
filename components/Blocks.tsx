@@ -51,7 +51,9 @@ function BlockView({ block }: { block: Block }) {
     if (!block.html || block.html === "\u200b" || !block.html.replace(/\u200b/g, "").trim()) {
       return <Tag className="zw" dangerouslySetInnerHTML={{ __html: block.html || "<br/>" }} />;
     }
-    return <Tag dangerouslySetInnerHTML={{ __html: block.html }} />;
+    const plain = block.html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+    const compact = block.level === 2 && plain === "הסרת שיער בכל השיטות";
+    return <Tag className={compact ? "h-35" : undefined} dangerouslySetInnerHTML={{ __html: block.html }} />;
   }
   if (block.type === "p") return <p dangerouslySetInnerHTML={{ __html: block.html }} />;
   if (block.type === "ul" || block.type === "ol") {

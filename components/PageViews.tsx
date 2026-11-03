@@ -20,20 +20,29 @@ export function PageView({ page }: { page: PageData }) {
 
 function ContentView({ page }: { page: PageData }) {
   const parsed = parseLayout(page.blocks);
+  const serviceHero = parsed.hero && page.kind !== "about";
+  const hero = parsed.hero ? (
+    <section className={serviceHero ? "split service-hero" : "split about-hero"}>
+      <SiteImage
+        src={parsed.hero.src}
+        alt={parsed.hero.alt}
+        width={parsed.hero.w}
+        height={parsed.hero.h}
+        priority
+        className={page.seo.canonical.endsWith("/treatments/tattoo-removal") ? "hero-photo hero-tall" : "hero-photo"}
+      />
+      <div className="hero-text">
+        {parsed.crumbs ? <Blocks blocks={[parsed.crumbs]} /> : null}
+        <Blocks blocks={parsed.lead} />
+      </div>
+    </section>
+  ) : null;
   return (
     <article className={`page ${page.kind}${page.seo.canonical.endsWith("/treatments") ? " hub" : ""}`}>
+      {serviceHero ? <div className="hero-bleed">{hero}</div> : null}
       <div className="wrap">
-        {parsed.hero ? (
-          <section className="split service-hero">
-            <SiteImage src={parsed.hero.src} alt={parsed.hero.alt} width={parsed.hero.w} height={parsed.hero.h} priority className="hero-photo" />
-            <div className="hero-text">
-              {parsed.crumbs ? <Blocks blocks={[parsed.crumbs]} /> : null}
-              <Blocks blocks={parsed.lead} />
-            </div>
-          </section>
-        ) : parsed.crumbs ? (
-          <Blocks blocks={[parsed.crumbs]} />
-        ) : null}
+        {serviceHero ? null : hero}
+        {!parsed.hero && parsed.crumbs ? <Blocks blocks={[parsed.crumbs]} /> : null}
         <div className={parsed.hero ? "page-body" : "page-body plain"}>
           <Flow blocks={parsed.hero ? parsed.body : parsed.flow} faqs={page.faqs} />
         </div>

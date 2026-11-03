@@ -179,7 +179,21 @@ img { max-width: 100%; height: auto; }
 .hero-text .blocks p.cta-row { text-align: right; }
 .hero-photo { width: 100%; max-width: 100%; min-width: 0; height: 310px; object-fit: cover; object-position: center 18%; border: 3px solid #f5c400; }
 .crumb-current { font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
-.service-hero { align-items: start; margin-bottom: 28px; gap: 48px; }
+.about-hero { align-items: start; margin-bottom: 28px; gap: 48px; }
+.service-hero {
+  align-items: start;
+  margin-bottom: 28px;
+  gap: 40px;
+}
+.service-hero .hero-photo {
+  width: 447px;
+  max-width: 100%;
+  height: 309px;
+  object-position: center center;
+  border: 0;
+}
+.service-hero .hero-photo.hero-tall { height: 374px; }
+.hero-text .blocks h1 { font-size: 38px; line-height: 1.35; font-weight: 400; }
 .hero-text .crumbs { color: #fff; font-size: 16px; font-weight: 700; margin-bottom: 10px; }
 .hero-text .crumbs a, .hero-text .crumb-current { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .page-body.plain { margin-top: 10px; }
@@ -255,6 +269,7 @@ img { max-width: 100%; height: auto; }
   text-align: center;
   margin: 34px 0 18px;
 }
+.page.hub .blocks h2.h-35 { font-size: 35px; }
 .recommendations .blocks, .recommendations .blocks h1, .recommendations .blocks p { text-align: center; }
 .authored { list-style: none; padding: 0; text-align: right; }
 .blocks h2 { font-size: 35px; font-weight: 400; line-height: 1.4; margin: 28px 0 10px; }
@@ -309,6 +324,17 @@ img { max-width: 100%; height: auto; }
   margin-bottom: 28px;
 }
 .split > * { min-width: 0; max-width: 100%; }
+.hero-bleed {
+  width: min(1300px, calc(100% - 48px));
+  margin: 0 auto;
+}
+.hero-bleed .split.service-hero {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  grid-template-columns: minmax(0, 447px) minmax(0, 1fr);
+}
 .split > div { direction: rtl; text-align: right; }
 .split .site-img { width: 100%; height: auto; object-fit: cover; }
 
@@ -887,6 +913,23 @@ img { max-width: 100%; height: auto; }
   .brand { font-size: 17px; letter-spacing: 3px; }
   .split, .about-grid, .contact-grid, .review-grid, .footer-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .hero-bleed,
+  .service-hero,
+  .split.service-hero,
+  .hero-bleed .split.service-hero {
+    width: min(1120px, calc(100% - 32px));
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    left: auto;
+    transform: none;
+    gap: 20px;
+  }
+  .service-hero .hero-photo,
+  .service-hero .hero-photo.hero-tall {
+    width: 100%;
+    height: 310px;
   }
   .honey-row { width: 100%; flex-wrap: wrap; }
   .info-grid {
