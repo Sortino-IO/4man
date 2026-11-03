@@ -109,7 +109,7 @@ function Flow({ blocks, faqs }: { blocks: Block[]; faqs: { q: string; a: string 
       const banner = imgs.length === 1 && imgs[0].w >= 1600 && imgs[0].w / imgs[0].h > 1.55 && blocks[i]?.type === "h";
       if (banner) {
         const chunk: Block[] = [];
-        while (i < blocks.length && !(chunk.length && blocks[i].type === "h" && blocks[i].level <= 2)) {
+        while (i < blocks.length && !(chunk.length && isStopHeading(blocks[i]))) {
           chunk.push(blocks[i]);
           i += 1;
         }
@@ -151,6 +151,10 @@ function Flow({ blocks, faqs }: { blocks: Block[]; faqs: { q: string; a: string 
     nodes.push(<Blocks key={key++} blocks={chunk} faqs={chunkHasFaq(chunk, faqs) ? faqs : []} />);
   }
   return <>{nodes}</>;
+}
+
+function isStopHeading(block: Block | undefined): block is Extract<Block, { type: "h" }> {
+  return !!block && block.type === "h" && block.level <= 2;
 }
 
 function chunkHasFaq(chunk: Block[], faqs: { q: string; a: string }[]) {
