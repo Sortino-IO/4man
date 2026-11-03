@@ -935,11 +935,18 @@ img { max-width: 100%; height: auto; }
     left: auto;
     transform: none;
     gap: 20px;
+    grid-template-columns: minmax(0, 1fr);
   }
   .service-hero .hero-photo,
   .service-hero .hero-photo.hero-tall {
     width: 100%;
+    max-width: 100%;
     height: 310px;
+  }
+  .hero-text {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
   }
   .honey-row { width: 100%; flex-wrap: wrap; }
   .info-grid {
