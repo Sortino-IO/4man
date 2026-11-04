@@ -161,6 +161,47 @@ function auditFn() {
   }
   if (narrow.length) problems.push("squeezed text " + narrow.join(" | "));
 
+  const overlaps = [];
+  const textBoxes = [...document.querySelectorAll("main h1, main h2, main h3, main p, main li")].filter((el) => {
+    if (el.closest("header, footer, nav, .hero, .hex, .services-band, .cookie, .lightbox, .coverflow, .about-collage, .info-card")) return false;
+    const s = getComputedStyle(el);
+    if (s.display === "none" || s.visibility === "hidden" || s.position === "fixed" || s.position === "sticky") return false;
+    const text = (el.innerText || "").replace(/\s+/g, " ").trim();
+    return text.length > 12;
+  });
+  function intersects(a, b) {
+    const iw = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+    const ih = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+    return iw > 10 && ih > 10;
+  }
+  for (let i = 0; i < textBoxes.length; i++) {
+    const aEl = textBoxes[i];
+    const a = aEl.getBoundingClientRect();
+    if (a.width < 2 || a.height < 2) continue;
+    for (const img of document.querySelectorAll("main img")) {
+      if (img.closest(".hero, .hex, .services-band, .coverflow, .about-collage, .lightbox, .info-card, .promise-photos")) continue;
+      const s = getComputedStyle(img);
+      if (s.display === "none" || s.position === "fixed") continue;
+      const b = img.getBoundingClientRect();
+      if (b.width < 40 || b.height < 40) continue;
+      if (intersects(a, b)) {
+        overlaps.push(`text/img ${(aEl.innerText || "").replace(/\s+/g, " ").trim().slice(0, 24)}`);
+        break;
+      }
+    }
+    for (let j = i + 1; j < textBoxes.length; j++) {
+      const bEl = textBoxes[j];
+      if (aEl.contains(bEl) || bEl.contains(aEl)) continue;
+      const b = bEl.getBoundingClientRect();
+      if (intersects(a, b)) {
+        overlaps.push(`text/text ${(aEl.innerText || "").replace(/\s+/g, " ").trim().slice(0, 18)}`);
+        break;
+      }
+    }
+    if (overlaps.length >= 4) break;
+  }
+  if (overlaps.length) problems.push("overlap " + overlaps.join(" | "));
+
   return problems;
 }
 

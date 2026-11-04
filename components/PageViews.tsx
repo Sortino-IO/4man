@@ -217,6 +217,10 @@ function HomeView({ page }: { page: PageData }) {
   const contact = blocks.findIndex((b) => b.type === "h" && strip(b.type === "h" ? b.html : "").includes("צור קשר"));
   const about = vito >= 0 ? blocks.slice(vito, contact > 0 ? contact : undefined) : [];
   const tail = contact >= 0 ? blocks.slice(contact) : [];
+  const promiseAt = tail.findIndex((b, i) => i > 0 && b.type === "img");
+  const contactBlocks = promiseAt > 0 ? tail.slice(0, promiseAt) : tail.filter((b) => b.type !== "img");
+  const promiseImgs = (promiseAt > 0 ? tail.slice(promiseAt) : []).filter((b): b is Extract<Block, { type: "img" }> => b.type === "img");
+  const promiseCopy = promiseAt > 0 ? tail.slice(promiseAt).filter((b) => b.type !== "img") : [];
   const gallery = about.filter((b) => b.type === "img" && !(b.alt || "").includes("ויטו"));
   const aboutCopy = about.filter((b) => b.type !== "img" || (b.alt || "").includes("ויטו"));
   const portrait = aboutCopy.find((b): b is Extract<Block, { type: "img" }> => b.type === "img");
@@ -251,12 +255,36 @@ function HomeView({ page }: { page: PageData }) {
       <section className="contact-band">
         <div className="wrap contact-grid">
           <div>
-            <Blocks blocks={tail} />
+            <Blocks blocks={contactBlocks} />
           </div>
           <Map />
         </div>
       </section>
+      {promiseImgs.length || promiseCopy.length ? <PromiseBand images={promiseImgs} blocks={promiseCopy} /> : null}
     </article>
+  );
+}
+
+function PromiseBand({
+  images,
+  blocks,
+}: {
+  images: Extract<Block, { type: "img" }>[];
+  blocks: Block[];
+}) {
+  const [stand, sit] = images;
+  return (
+    <section className="promise">
+      <div className="promise-grid">
+        <div className="promise-photos">
+          {stand ? <SiteImage src={stand.src} alt={stand.alt} width={stand.w} height={stand.h} className="promise-stand" /> : null}
+          {sit ? <SiteImage src={sit.src} alt={sit.alt} width={sit.w} height={sit.h} className="promise-sit" /> : null}
+        </div>
+        <div className="promise-copy">
+          <Blocks blocks={blocks} />
+        </div>
+      </div>
+    </section>
   );
 }
 
