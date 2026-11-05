@@ -162,6 +162,7 @@ img { max-width: 100%; height: auto; }
 .mobile-row a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 300; text-align: center; padding: 8px 0; }
 .mobile-row a.active { color: #fed100; }
 .mobile-row button, .mobile-pad { background: transparent; color: #fff; border: 0; font-size: 14px; }
+.mobile-row button { font-size: 20px; line-height: 1; }
 .mobile-sub { display: flex; flex-direction: column; padding: 0 24px 8px; }
 .mobile-sub a { color: #ddd; text-decoration: none; padding: 8px 0; font-size: 15px; font-weight: 300; text-align: center; }
 
