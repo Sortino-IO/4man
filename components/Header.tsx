@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { NAV, WA, type NavItem } from "@/lib/nav";
 
 const COLUMNS: Record<string, { href: string; label: string }[][]> = {
@@ -60,13 +60,44 @@ function activeItem(item: NavItem, path: string) {
 
 export function Header() {
   const path = usePathname();
+  const headerRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const [drop, setDrop] = useState<string | null>(null);
   const [mobileDrop, setMobileDrop] = useState<string | null>(null);
-  const columns = drop ? COLUMNS[drop] : null;
+
+  useLayoutEffect(() => {
+    if (!drop) return;
+    const header = headerRef.current;
+    if (!header) return;
+    const place = () => {
+      const parent = header.querySelector<HTMLElement>(`[data-nav="${CSS.escape(drop)}"]`);
+      const mega = header.querySelector<HTMLElement>(".mega");
+      if (!parent || !mega) return;
+      const hb = header.getBoundingClientRect();
+      const pb = parent.getBoundingClientRect();
+      const width = mega.offsetWidth;
+      const center = pb.left + pb.width / 2 - hb.left;
+      const min = 12;
+      const max = Math.max(min, hb.width - width - 12);
+      mega.style.left = `${Math.min(Math.max(center - width / 2, min), max)}px`;
+    };
+    place();
+    window.addEventListener("resize", place);
+    return () => window.removeEventListener("resize", place);
+  }, [drop]);
 
   return (
-    <header className="site-header" onMouseLeave={() => setDrop(null)}>
+    <header
+      ref={headerRef}
+      className="site-header"
+      onMouseLeave={() => setDrop(null)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDrop(null);
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") setDrop(null);
+      }}
+    >
       <a className="skip" href="#content">
         לדלג לתוכן הראשי
       </a>
@@ -89,12 +120,40 @@ export function Header() {
         <nav className="main-nav" aria-label="ראשי">
           {NAV.map((item) => {
             const on = activeItem(item, path);
+            const menu = COLUMNS[item.href];
             return (
-              <div key={item.href} className="nav-item" onMouseEnter={() => setDrop(COLUMNS[item.href] ? item.href : null)}>
-                <Link href={item.href} className={on ? "active" : undefined} aria-current={on ? "page" : undefined}>
+              <div
+                key={item.href}
+                className="nav-item"
+                data-nav={item.href}
+                onMouseEnter={() => setDrop(menu ? item.href : null)}
+                onFocus={() => {
+                  if (menu) setDrop(item.href);
+                }}
+              >
+                <Link
+                  href={item.href}
+                  className={on ? "active" : undefined}
+                  aria-current={on ? "page" : undefined}
+                  aria-expanded={menu ? drop === item.href : undefined}
+                  aria-haspopup={menu ? "true" : undefined}
+                >
                   {item.label}
-                  {COLUMNS[item.href] ? <i className="nav-caret" aria-hidden="true" /> : null}
+                  {menu ? <i className="nav-caret" aria-hidden="true" /> : null}
                 </Link>
+                {menu && drop === item.href ? (
+                  <div className="mega">
+                    {menu.map((col, i) => (
+                      <div key={i} className="mega-col">
+                        {col.map((link) => (
+                          <Link key={link.href} href={link.href} onClick={() => setDrop(null)}>
+                            {link.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             );
           })}
@@ -103,19 +162,6 @@ export function Header() {
           <WhatsIcon />
         </a>
       </div>
-      {columns ? (
-        <div className="mega" onMouseEnter={() => setDrop(drop)}>
-          {columns.map((col, i) => (
-            <div key={i} className="mega-col">
-              {col.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          ))}
-        </div>
-      ) : null}
       {open ? (
         <nav className="mobile-nav" aria-label="תפריט">
           <button className="mobile-close" type="button" aria-label="סגור תפריט" onClick={() => setOpen(false)}>
