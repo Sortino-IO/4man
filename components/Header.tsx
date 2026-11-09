@@ -163,7 +163,7 @@ export function Header() {
         </a>
       </div>
       <a className="wa-mobile" href={WA} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-        <WhatsIcon fill="#111" />
+        <WhatsIcon />
       </a>
       {open ? (
         <nav className="mobile-nav" aria-label="תפריט">
