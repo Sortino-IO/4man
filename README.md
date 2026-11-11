@@ -19,7 +19,7 @@ Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_META_PIXEL_ID` when the
 
 - Google Tag Manager `GTM-M9B7BMF` and GA4 `G-4Y0XK68961` load on every page, as on the live site.
 - Meta Pixel renders only when `NEXT_PUBLIC_META_PIXEL_ID` is set.
-- `middleware.ts` returns **301** for `/blog` and `/blog/*` → `/articles`, `/hl-products` and `/hl-products/*` → `/`, `/articles/page/1` and `/articles/page/3` → `/articles` (those two pagination URLs redirect on the live site). `/articles/page/2` stays, because it is a real self-canonical page even though Wix omitted it from the sitemap.
+- `middleware.ts` returns **301** for `/blog` and `/blog/*` → `/articles`, `/hl-products` and `/hl-products/*` → `/`, `/articles/page/1` and `/articles/page/3` → `/articles` (those two pagination URLs redirect on the live site), and `/post/cne-treatment-for-men-causes-and-solutions` → `/post/acne-treatment-for-men-causes-and-solutions`. `/articles/page/2` stays, because it is a real self-canonical page even though Wix omitted it from the sitemap.
 - Apex `4man.co.il` → `https://www.4man.co.il` is also a **301** in middleware. On Vercel, add both `www.4man.co.il` (primary) and `4man.co.il`. This is a domain-level redirect, same as today; point DNS only after mail records (MX, SPF, DKIM) are copied. Do not transfer the registrar in the middle of the cutover.
 
 ## What replaced Wix widgets
