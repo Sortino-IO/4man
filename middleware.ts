@@ -21,6 +21,9 @@ export function middleware(request: NextRequest) {
   if (path === "/articles/page/1" || path === "/articles/page/3") {
     return NextResponse.redirect(new URL("/articles", request.url), 301);
   }
+  if (path === "/post/cne-treatment-for-men-causes-and-solutions") {
+    return NextResponse.redirect(new URL("/post/acne-treatment-for-men-causes-and-solutions", request.url), 301);
+  }
   return NextResponse.next();
 }
 
