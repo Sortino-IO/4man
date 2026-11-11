@@ -43,12 +43,13 @@ const COLUMNS: Record<string, { href: string; label: string }[][]> = {
 
 const MOBILE: { href: string; label: string; menu?: string }[] = [
   { href: "/", label: "ראשי" },
+  { href: "/about", label: "אודות" },
   { href: "/treatments", label: "טיפולים" },
-  { href: "/hair-removal-methods", label: "הסרת שיער בכל השיטות", menu: "/hair-removal-methods" },
   { href: "/facial-treatments-for-men", label: "טיפולי פנים לגבר", menu: "/facial-treatments-for-men" },
-  { href: "/accessibility", label: "הצהרת נגישות" },
-  { href: "/recommendations", label: "המלצות" },
+  { href: "/hair-removal-methods", label: "הסרת שיער בכל השיטות", menu: "/hair-removal-methods" },
+  { href: "/treatments/tattoo-removal", label: "הסרת קעקועים" },
   { href: "/articles", label: "טיפים ומידע" },
+  { href: "/contact-us", label: "יצירת קשר" },
 ];
 
 function activeItem(item: NavItem, path: string) {
