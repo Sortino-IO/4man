@@ -10,15 +10,15 @@ The canonical host stays `https://www.4man.co.il`. Every URL in the live sitemap
 npm install
 npm run build
 npm start
-npm run crawl   # compares the 70 sitemap URLs with a server on http://127.0.0.1:3456
+npm run crawl   # compares the sitemap URLs with a server on http://127.0.0.1:3456
 ```
 
 Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_META_PIXEL_ID` when the pixel id is known. It is not in the live HTML.
 
 ## Tracking and redirects
 
-- Google Tag Manager `GTM-M9B7BMF` and GA4 `G-4Y0XK68961` load on every page, as on the live site.
-- Meta Pixel renders only when `NEXT_PUBLIC_META_PIXEL_ID` is set.
+- Google Tag Manager `GTM-M9B7BMF` is the only tag loader. GA4 `G-4Y0XK68961`, Google Ads, and the Meta pixel are inside that container, not in the page source.
+- Consent Mode v2 defaults to denied until the visitor accepts. The choice is stored and applied on the next visit.
 - `middleware.ts` returns **301** for `/blog` and `/blog/*` → `/articles`, `/hl-products` and `/hl-products/*` → `/`, `/articles/page/1` and `/articles/page/3` → `/articles` (those two pagination URLs redirect on the live site), and `/post/cne-treatment-for-men-causes-and-solutions` → `/post/acne-treatment-for-men-causes-and-solutions`. `/articles/page/2` stays, because it is a real self-canonical page even though Wix omitted it from the sitemap.
 - Apex `4man.co.il` → `https://www.4man.co.il` is also a **301** in middleware. On Vercel, add both `www.4man.co.il` (primary) and `4man.co.il`. This is a domain-level redirect, same as today; point DNS only after mail records (MX, SPF, DKIM) are copied. Do not transfer the registrar in the middle of the cutover.
 
