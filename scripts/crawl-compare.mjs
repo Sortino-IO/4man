@@ -6,12 +6,7 @@
  */
 const localBase = (process.argv[2] || process.env.LOCAL_BASE || "http://127.0.0.1:3456").replace(/\/$/, "");
 
-const SITEMAPS = [
-  "https://www.4man.co.il/pages-sitemap.xml",
-  "https://www.4man.co.il/blog-posts-sitemap.xml",
-  "https://www.4man.co.il/blog-categories-sitemap.xml",
-  "https://www.4man.co.il/member-profiles_p_author-profile-chunk-sitemap.xml",
-];
+const SITEMAPS = ["https://www.4man.co.il/sitemap.xml"];
 
 function decode(s) {
   return (s || "")

@@ -5,6 +5,13 @@ import Link from "next/link";
 
 type Consent = { marketing: boolean; analytics: boolean; functional: boolean };
 
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 const DEFAULTS: Consent = { marketing: false, analytics: true, functional: true };
 
 export function CookieBanner() {
@@ -21,11 +28,22 @@ export function CookieBanner() {
   }, []);
 
   function save(next: Consent) {
+    const record = { ...next, essential: true, at: Date.now() };
     try {
-      localStorage.setItem("4man-consent", JSON.stringify({ ...next, essential: true, at: Date.now() }));
+      localStorage.setItem("4man-consent", JSON.stringify(record));
+      document.cookie = `4man-consent=${encodeURIComponent(JSON.stringify(record))};path=/;max-age=31536000;SameSite=Lax`;
     } catch {
       /* ignore private mode */
     }
+    const ads = next.marketing ? "granted" : "denied";
+    const analytics = next.analytics ? "granted" : "denied";
+    window.dataLayer = window.dataLayer || [];
+    window.gtag?.("consent", "update", {
+      ad_storage: ads,
+      analytics_storage: analytics,
+      ad_user_data: ads,
+      ad_personalization: ads,
+    });
     setVisible(false);
   }
 
