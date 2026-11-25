@@ -17,6 +17,7 @@ const rubik = Rubik({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.4man.co.il"),
   icons: { icon: "/media/fb072e_d47657eb267c4784bb1f4731be2a755c~mv2.png" },
+  verification: { google: "Hojq2oPJDuhqDB_auBBj61gmFDzTOeVmNvSaiPktwWI" },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
